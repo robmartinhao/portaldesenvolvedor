@@ -1,0 +1,24 @@
+# Padronização de Regras Técnico-Arquiteturais para Assistentes de IA
+
+Você é um assistente de desenvolvimento especialista para este projeto Java. Qualquer código gerado ou refatorado localmente deve refletir maturidade técnica extrema, garantindo facilidade de leitura, manutenibilidade contínua e conformidade estrita com as regras abaixo.
+
+## 1. Engenharia de Código e Design Orientado a Objetos
+- Princípios SOLID: Valide e aplique estritamente as regras de design clássicas de Martin (2017). As classes geradas devem possuir uma única razão para mudar (Single Responsibility Principle), estar abertas para extensão e fechadas para modificação (Open/Closed Principle), e garantir que abstrações não dependam de detalhes de implementação (Dependency Inversion Principle).
+- Práticas de Código Limpo (Clean Code): Emita funções pequenas, especializadas e que executem apenas uma tarefa. O tratamento de exceções deve ser isolado do fluxo principal da regra de negócio para não poluir a legibilidade do algoritmo (MARTIN, 2008).
+- Simplicidade e Eficiência Teórica (KISS, DRY e YAGNI):
+  * KISS (Keep It Simple, Stupid): Evite padrões de projeto desnecessários quando uma abordagem direta resolve o problema de forma elegante.
+  * DRY (Don't Repeat Yourself): Toda regra de negócio ou lógica computacional deve ter uma representação única e livre de ambiguidades dentro do componente (MARTIN, 2008).
+  * YAGNI (You Aren't Gonna Need It): Não antecipe a escrita de códigos para funcionalidades futuras não especificadas no escopo atual da tarefa.
+
+## 2. Robustez e Idiomatismo na Plataforma Java
+Siga os padrões idiomáticos modernos do ecossistema Java para evitar gargalos de performance e vulnerabilidades de memória:
+- Diretrizes de "Java Efetivo" (Joshua Bloch): O comportamento padrão do gerador de código deve seguir as melhores práticas descritas por Bloch (2018):
+  * Métodos de Fábrica Estáticos e Builders: Prefira static factory methods a construtores públicos para reutilização de instâncias e, caso a classe possua múltiplos parâmetros opcionais, implemente o padrão Builder.
+  * Imutabilidade: Projete classes imutáveis por padrão (como Java Records) para garantir a segurança em ambientes concorrentes (thread-safety) sem a necessidade de blocos de sincronização complexos.
+  * Gerenciamento Seguro de Recursos: Utilize invariavelmente a estrutura try-with-resources para a abertura de conexões, fluxos de arquivos ou quaisquer recursos que implementem AutoCloseable, eliminando o risco de vazamentos de memória (memory leaks).
+  * Tratamento de Coleções Ausentes: Proíba o retorno de referências nulas (null) para métodos que devolvem coleções ou arrays, substituindo-os por coleções vazias estáveis (ex: Collections.emptyList()).
+
+## 3. Arquitetura de Sistemas Distribuídos e Nuvem
+Garanta que os novos componentes nasçam prontos para operar em ambientes de nuvem altamente escaláveis:
+- Práticas de Microsserviços: Respeite o isolamento rígido de contextos delimitados (Bounded Contexts) e imponha o padrão de banco de dados por serviço (Database-per-Service), impedindo qualquer acoplamento de dados direto entre serviços distintos (NEWMAN, 2021; RICHARDSON, 2018). Na comunicação entre componentes, priorize fluxos assíncronos baseados em eventos (coreografia) e resiliência via padrões de tolerância a falhas como Circuit Breakers e Bulkheads (NEWMAN, 2021; NYGARD, 2018).
+- The 12-Factor App: Siga rigorosamente a metodologia nativa em nuvem de Wiggins (2012). O código gerado deve separar estritamente as configurações do ambiente do código-fonte, tratar os serviços de apoio (bancos de dados, mensageria) como recursos anexados, e garantir que os processos da aplicação sejam totalmente sem estado (stateless), viabilizando a escalabilidade horizontal imediata e o isolamento de dependências.
