@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.projeto.ia</groupId>
 	<artifactId>portal</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 	<name>Portal do Desenvolvedor</name>
 	<description>Portal Interno do Desenvolvedor para geração acelerada de microsserviços padronizados Spring Boot</description>
 	<url/>
