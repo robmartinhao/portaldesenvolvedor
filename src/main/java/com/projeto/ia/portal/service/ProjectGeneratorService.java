@@ -53,8 +53,10 @@ public class ProjectGeneratorService {
 
         var files = new LinkedHashMap<String, String>();
 
-        // Arquivo .cursorrules — Regra de Negócio Crítica
-        files.put(root + ".cursorrules", cursorRulesProvider.getContent());
+        // Arquivos de contexto para assistentes de IA — Regra de Negócio Crítica
+        cursorRulesProvider.getContextFiles().forEach((filename, content) ->
+                files.put(root + ".context/" + filename, content)
+        );
 
         // Configuração Maven
         files.put(root + "pom.xml", generatePomXml(request));

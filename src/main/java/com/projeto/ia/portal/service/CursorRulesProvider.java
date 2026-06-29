@@ -1,45 +1,75 @@
 package com.projeto.ia.portal.service;
 
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
- * Fornecedor do conteúdo do arquivo {@code .cursorrules}.
+ * Fornecedor dos arquivos de contexto para assistentes de IA.
  * <p>
- * O conteúdo é carregado a partir de um recurso no classpath
- * ({@code templates/cursorrules.txt}) para facilitar manutenção
- * e evitar problemas de escape em código Java.
- * É injetado na raiz de cada projeto gerado.
+ * Carrega todos os arquivos {@code .md} da pasta {@code templates/context/}
+ * no classpath e os disponibiliza como um mapa ordenado (nome → conteúdo).
+ * Cada arquivo é injetado na pasta {@code .context/} na raiz de cada
+ * projeto gerado.
  */
 @Component
 public class CursorRulesProvider {
 
-    private final String content;
+    private static final String CONTEXT_PATTERN = "classpath:templates/context/*.md";
+
+    private final Map<String, String> contextFiles;
 
     /**
-     * Carrega o conteúdo do .cursorrules a partir do classpath no momento
-     * da inicialização, utilizando try-with-resources para gerenciamento
-     * seguro do InputStream.
+     * Carrega todos os arquivos de contexto da pasta {@code templates/context/}
+     * no momento da inicialização, mantendo a ordem alfabética dos nomes.
      */
     public CursorRulesProvider() {
-        var resource = new ClassPathResource("templates/cursorrules.txt");
-        try (InputStream inputStream = resource.getInputStream()) {
-            this.content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-        } catch (IOException ex) {
-            throw new IllegalStateException(
-                    "Falha ao carregar o template .cursorrules do classpath", ex);
-        }
+        this.contextFiles = loadContextFiles();
     }
 
     /**
-     * Retorna o conteúdo completo do arquivo .cursorrules
-     * conforme especificação da regra de negócio.
+     * Retorna um mapa imutável com os arquivos de contexto.
+     * A chave é o nome do arquivo (ex: {@code 01-clean-code.md})
+     * e o valor é o conteúdo completo do arquivo.
      */
-    public String getContent() {
-        return content;
+    public Map<String, String> getContextFiles() {
+        return contextFiles;
+    }
+
+    private Map<String, String> loadContextFiles() {
+        var resolver = new PathMatchingResourcePatternResolver();
+        var result = new LinkedHashMap<String, String>();
+
+        try {
+            var resources = resolver.getResources(CONTEXT_PATTERN);
+
+            for (var resource : resources) {
+                String filename = resource.getFilename();
+                if (filename == null) {
+                    continue;
+                }
+
+                try (InputStream inputStream = resource.getInputStream()) {
+                    String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+                    result.put(filename, content);
+                }
+            }
+        } catch (IOException ex) {
+            throw new IllegalStateException(
+                    "Falha ao carregar os arquivos de contexto do classpath", ex);
+        }
+
+        if (result.isEmpty()) {
+            throw new IllegalStateException(
+                    "Nenhum arquivo de contexto encontrado em templates/context/");
+        }
+
+        return Map.copyOf(result);
     }
 }
